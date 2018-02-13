@@ -19,3 +19,40 @@ With the above, nothing is provided for cluster name or credentials in the provi
 provider "kubernetes" {
 }
 ```
+### Kubernetes Deployments and Replica Sets
+This example demonstrates using terraform to create an initial deployment for a simple container-based application. It uses a basic 'hello-world' node application. The basic code is shown below:
+```
+resource "kubernetes_replication_controller" "hello-web" {
+  metadata {
+    name = "hello-web"
+    labels {
+      app = "hello-web"
+    }
+  }
+
+  spec {
+    selector {
+      app = "hello-web"
+    }
+    template {
+      container {
+        image = "gcr.io/onehq-192515/hello-app:v1"
+        name  = "hello-web"
+        port {
+          container_port = 8080
+        }
+        resources{
+          limits{
+            cpu    = "0.5"
+            memory = "512Mi"
+          }
+          requests{
+            cpu    = "250m"
+            memory = "50Mi"
+          }
+        }
+      }
+    }
+  }
+}
+```
