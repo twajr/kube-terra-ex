@@ -19,12 +19,16 @@ With the above, nothing is provided for cluster name or credentials in the provi
 provider "kubernetes" {
 }
 ```
-### Kubernetes Deployments and Replica Sets
+### Kubernetes Namespaces
+This project creates two namespaces, development and production. A variable for namespace is provided and it defaults to 'development'. The deployment and service described below then create the workloads within the development namespace.
+
+### Kubernetes Deployments and Replica Sets / Controllers
 This example demonstrates using terraform to create an initial deployment for a simple container-based application. It uses a basic 'hello-world' node application. The basic code is shown below:
 ```
 resource "kubernetes_replication_controller" "hello-web" {
   metadata {
     name = "hello-web"
+    namespace = "${var.namespace}"    
     labels {
       app = "hello-web"
     }
@@ -53,6 +57,30 @@ resource "kubernetes_replication_controller" "hello-web" {
         }
       }
     }
+  }
+}
+```
+The current terraform provider only provides a replication controller resource whereas the current standard is to use a 'deployment' resource but this is a recent change. The replication controller is basically the same. It provides a template for a 'pod' and ensures the required number of instances are made available.
+
+### Kubernetes Services
+Deployments are exposed to via a Kubernetes service that basically creates a load-balance in front of a series of pod instances. The code below demonstrates attaching this service to our RC noted above:
+```
+resource "kubernetes_service" "hello-web" {
+  metadata {
+    name = "hello-web"
+    namespace = "${var.namespace}"    
+  }
+  spec {
+    selector {
+      app = "${kubernetes_replication_controller.hello-web.metadata.0.labels.app}"
+    }
+    session_affinity = "ClientIP"
+    port {
+      port = 80
+      target_port = 8080
+    }
+
+    type = "LoadBalancer"
   }
 }
 ```

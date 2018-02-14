@@ -1,26 +1,26 @@
-// 
-// variable "region" {
-//   default = "us-central1"
-// }
-// variable "zone" {
-//   default = "us-central1-a"
-// }
+
 
 variable "project_name" {}
-
+variable "namespace" {}
 
 provider "kubernetes" {
 }
 
-// resource "kubernetes_namespace" "default" {
-//   metadata {
-//     name = "default"
-//   }
-// }
+resource "kubernetes_namespace" "development" {
+  metadata {
+    name = "development"
+  }
+}
+resource "kubernetes_namespace" "production" {
+  metadata {
+    name = "production"
+  }
+}
 
 resource "kubernetes_service" "hello-web" {
   metadata {
     name = "hello-web"
+    namespace = "${var.namespace}"
   }
   spec {
     selector {
@@ -39,6 +39,7 @@ resource "kubernetes_service" "hello-web" {
 resource "kubernetes_replication_controller" "hello-web" {
   metadata {
     name = "hello-web"
+    namespace = "${var.namespace}"
     labels {
       app = "hello-web"
     }
