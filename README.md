@@ -1,11 +1,14 @@
 # kube-terra-ex
 
-An example that demonstrates creating deployments and services on an existing google cloud Kubernetes cluster using the terraform kubernetes provider.
+An example that demonstrates creating deployments and services on an existing google cloud kubernetes cluster using the terraform kubernetes provider. This example builds on gke-terra-ex where the cluster itself is provisioned.
+
+The general thinking is that the gke-terra-ex project provides our 'infrastrcture-as-a-service' layer where terraform manages the gcloud gke cluster creation and management. This project then adds the 'application infrastructure' layer using the kubernetes provider to create deployments and services.
 
 ### Requirements
   1. An existing gloud GKE cluster
   1. terraform installed
   1. gloud and its K8s requirements installed
+  1. This project uses the secrets file described in gke-terra-ex
 
 ### Credentials
 Credentials for the Kubernetes provider are best retrieved from your ~/.kube directory. Before running terraform commands associate to the appropriate cluster
@@ -83,4 +86,10 @@ resource "kubernetes_service" "hello-web" {
     type = "LoadBalancer"
   }
 }
+```
+### Building the Application RCs and Services
+Running the terraform plan and apply goes something is the same as described in the cluster build project:
+```
+terraform plan \
+ -var-file="~/.gcloud/gke-secrets.tfvars"
 ```
