@@ -4,7 +4,7 @@ metadata:
   labels:
     run: hello-web
   name: hello-web
-  namespace: development
+  namespace: default
 spec:
   externalTrafficPolicy: Cluster
   ports:
@@ -22,7 +22,7 @@ metadata:
   labels:
     app: hello-web
   name: hello-web
-  namespace: development
+  namespace: default
 spec:
   replicas: 1
   template:
@@ -58,10 +58,20 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: hello-ingress
-  namespace: development
+  namespace: default
   annotations:
     kubernetes.io/ingress.global-static-ip-name: first-cluster-hello-web-ip
 spec:
-  backend:
-    serviceName: hello-web
-    servicePort: 80
+  rules:
+  - host: hello.twajr.net
+    http:
+      paths:
+      - backend:
+          serviceName: hello-web
+          servicePort: 80
+  - host: goodbye.twajr.net
+    http:
+      paths:
+      - backend:
+          serviceName: hello-web
+          servicePort: 80
