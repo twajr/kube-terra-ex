@@ -4,7 +4,7 @@ metadata:
   labels:
     run: hello-web
   name: hello-web
-  namespace: default
+  namespace: development
 spec:
   externalTrafficPolicy: Cluster
   ports:
@@ -22,7 +22,7 @@ metadata:
   labels:
     app: hello-web
   name: hello-web
-  namespace: default
+  namespace: development
 spec:
   replicas: 1
   template:
@@ -58,7 +58,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: hello-ingress
-  namespace: default
+  namespace: development
   annotations:
     kubernetes.io/ingress.global-static-ip-name: first-cluster-hello-web-ip
 spec:

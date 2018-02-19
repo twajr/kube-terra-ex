@@ -4,6 +4,12 @@ An example that demonstrates creating deployments and services on an existing go
 
 The general thinking is that the gke-terra-ex project provides our 'infrastrcture-as-a-service' layer where terraform manages the gcloud gke cluster creation and management. This project then adds the 'application infrastructure' layer using the kubernetes provider to create deployments and services.
 
+### Issues
+  1. Both the 'Deployment' and 'Ingress' objects in Kubernetes are still in beta. Terraform will not implement beta objects, so this means:
+    1. You must use 'Replication Controller' instead of the deployment object
+    1. Given the 'Ingress' object is not supported, it must be managed via a YAML file
+  1. This project includes 'hello-web-all.yaml' that demonstrates managing everything WITHOUT terraform
+
 ### Requirements
   1. An existing gloud GKE cluster
   1. terraform installed
